@@ -1,0 +1,7 @@
+lxml == 3.4.4
+requests
+pandas
+pytz
+numpy
+python_dateutil
+
