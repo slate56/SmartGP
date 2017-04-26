@@ -1,24 +1,9 @@
 
 import tushare as ts
-import os
+import UtilsTools as ut
 
 
-def mkdir(path):
-    # 去除首位空格
-    path = path.strip()
-    # 去除尾部 \ 符号
-    path = path.rstrip("\\")
 
-    isExists = os.path.exists(path)
-
-    # 判断结果
-    if not isExists:
-        # 如果不存在则创建目录
-        os.makedirs(path)
-        return True
-    else:
-        # 如果目录存在则不创建，并提示目录已存在
-        return False
 
 def UpDataAll():
     ERROR_ON_READ_DATA = "TRUE"
@@ -39,5 +24,6 @@ def UpDataAll():
 
 
 if __name__ == "__main__":
-    UpDataAll()
+    #UpDataAll()
+    print(ut.getStockPath())
 
