@@ -1,29 +1,38 @@
+import string
 
 import tushare as ts
 import UtilsTools as ut
+import os
 
 
+def DownData(df = None, stockCode = ""):
+    nothing = ""
 
+def SaveBasic(df = None, stockCode = ""):
+
+    stockPath = ut.getStockPath(stockCode)
+    ut.mkdir(stockPath)
+    stockBasic = df.ix[stockCode]
+    stockFile = "{}/{}.h5".format(stockPath, stockCode)
+    stockBasic.to_hdf(stockFile, "basicInfo")
+
+    if os.getenv('DEBUG') == "TRUE":
+        stockJSON = "{}/{}.json".format(stockPath, stockCode)
+        stockBasic.to_json(stockJSON)
 
 def UpDataAll():
-    ERROR_ON_READ_DATA = "TRUE"
+    import pandas as pd
 
-    try:
-        import pandas as pd
-        df = pd.read_hdf('all.h5', 'table')
-        ERROR_ON_READ_DATA = "FALSE"
-    except Exception as e:
-        ERROR_ON_READ_DATA = "TRUE";
+    path = ut.getStockPath() + "all.h5"
+    old_df = pd.read_hdf(path, "table")
+    new_df = ts.get_stock_basics()
+    
 
-    if ERROR_ON_READ_DATA == "TRUE":
-        df = ts.get_stock_basics()
-        df.to_hdf('all.h5', 'table')
-
-    for stockCode in df.index:
-        print(stockCode)
+    for stockCode in new_df.index:
+        DownData(new_df.ix[stockCode], stockCode)
 
 
 if __name__ == "__main__":
-    #UpDataAll()
-    print(ut.getStockPath())
+    UpDataAll()
+
 
