@@ -1,27 +1,34 @@
 import string
+import stock.stock as stock
 
 import tushare as ts
 import UtilsTools as ut
 import os
+import pandas as pd
 
+stockDict = []
 
 def UpDataAll():
-    import pandas as pd
-
     df = ts.get_stock_basics()
 
-    for stockCode in df.index:
-        stockPath = ut.getStockPath(stockCode)
-        ut.mkdir(stockPath)
-        stockBasic = df.ix[stockCode]
-        stockFile = "{}/{}.h5".format(stockPath, stockCode)
+    for Code in df.index:
+        stockObj = stock.stockObject(df.ix[Code])
+        stockDict[Code] = stockObj
+
+        stockPath = ut.getStockPath(Code)
+        ut.checkdir(stockPath)
+        stockBasic = df.ix[Code]
+        stockFile = "{}/{}.h5".format(stockPath, Code)
         stockBasic.to_hdf(stockFile, "basicInfo")
 
         if os.getenv('DEBUG') == "TRUE":
-            stockJSON = "{}/{}.json".format(stockPath, stockCode)
+            stockJSON = "{}/{}.json".format(stockPath, Code)
             stockBasic.to_json(stockJSON)
 
 if __name__ == "__main__":
-    UpDataAll()
+    #UpDataAll()
+
+
+
 
 

@@ -1,6 +1,7 @@
 import os
 
-def mkdir(path):
+def checkdir(path):
+    '''检查目录是否存在，如果不存在就创建一个'''
     # 去除首位空格
     path = path.strip()
     # 去除尾部 \ 符号
