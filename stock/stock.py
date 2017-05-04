@@ -1,6 +1,7 @@
 #处理一个股票的操作
 import UtilsTools as ut
 import tushare as ts
+import time
 import pandas as pd
 import os
 
@@ -68,13 +69,13 @@ class stockObject(object):
 
         self.Series = stockSeries
         self.path = ut.getStockPath(self.Series['name'])
-        ut.checkdir(self.path)
         self.code = self.Series['code']
         self.name = self.Series['name']
         self.stockBasic = "{}/{}.h5".format(self.path, self.code)
         self.stockConf = "{}/{}.conf".format(self.path, self.code)
 
-        self.Series.to_hdf(self.stockFile, "basicInfo")
+        if not ut.checkdir(self.path):
+            self.Series.to_hdf(self.stockFile, "basicInfo")
 
         try:
             f = open(self.stockConf, 'r')  # 读写文件
@@ -102,3 +103,23 @@ class stockObject(object):
         startDate = self.Series['timeToMarket']
         if self.lastUpdateTime != None:
             startDate = self.lastUpdateTime
+
+        '''get_hist_data 返回格式
+        date：日期
+        open：开盘价
+        high：最高价
+        close：收盘价
+        low：最低价
+        volume：成交量
+        price_change：价格变动
+        p_change：涨跌幅
+        ma5：5日均价
+        ma10：10日均价
+        ma20:20日均价
+        v_ma5:5日均量
+        v_ma10:10日均量
+        v_ma20:20日均量
+        turnover:换手率[注：指数无此项]
+        '''
+        now = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+        ts.get_hist_data(self.code, start=startDate, end=now)
