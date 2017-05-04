@@ -29,8 +29,9 @@ if __name__ == "__main__":
     #UpDataAll()
     #df = ts.get_k_data('399300', index=True, start='2016-1-01', end='2016-10-31')
     #TODO 获取历史数据的函数有变化，get-hist——data不能返回分钟数据
-    df = ts.get_hist_data('600848', ktype='60', start='2016-10-01', end='2016-10-31')
-    print(df)
+    df = ts.get_hist_data('600848', start='2016-10-01', end='2016-10-31')
+    df.to_hdf('11111.h5', 'de')
+
 
 
 
