@@ -4,6 +4,7 @@ import stock.stock as stock
 import tushare as ts
 import UtilsTools as ut
 import os
+import matplotlib.pyplot as plt
 import pandas as pd
 
 stockDict = []
@@ -18,19 +19,23 @@ def UpDataAll():
         stockPath = ut.getStockPath(Code)
         ut.checkdir(stockPath)
         stockBasic = df.ix[Code]
-        stockFile = "{}/{}.h5".format(stockPath, Code)
-        stockBasic.to_hdf(stockFile, "basicInfo")
-
-        if os.getenv('DEBUG') == "TRUE":
-            stockJSON = "{}/{}.json".format(stockPath, Code)
-            stockBasic.to_json(stockJSON)
+        stockFile = "{}/{}.csv".format(stockPath, Code)
+        stockBasic.to_csv(stockFile, index=False)
 
 if __name__ == "__main__":
     #UpDataAll()
-    #df = ts.get_k_data('399300', index=True, start='2016-1-01', end='2016-10-31')
-    #TODO 获取历史数据的函数有变化，get-hist——data不能返回分钟数据
-    df = ts.get_hist_data('600848', start='2016-10-01', end='2016-10-31')
-    df.to_hdf('11111.h5', 'de')
+    df_d = ts.get_k_data('600100', ktype='D')
+
+    #计算5、20、60、120、250日算术平均线
+    ma_list = [5, 20, 60, 120, 250]
+    for ma in ma_list:
+        df_d['MA_' + str(ma)] = df_d['close'].rolling(center=False, window=ma).mean()
+
+    # 计算5、20、60、120、250日指数平均线
+    for ma in ma_list:
+        df_d['EMA_' + str(ma)] = df_d['close'].ewm(span=ma, ignore_na=False, adjust=True).mean()
+
+    print(df_d)
 
 
 
